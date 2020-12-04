@@ -60,11 +60,19 @@ class SpeechAPI:
             #zh-CN:中国語,    ko-KR:韓国語
 
             voice = ''
+            rate  = ''
             if   (outLang == 'ja') or (outLang == 'ja-JP'):
-                #voice = 'Kyoko'
-                voice = ''
+                rate  = '260'
+                if (outGender != 'male'):
+                    voice = 'Kyoko'
+                    #voice = ''
+                else:
+                    voice = 'Otoya'
             elif (outLang == 'en') or (outLang == 'en-US'):
-                voice = 'Ava'
+                if (outGender != 'male'):
+                    voice = 'Ava'
+                else:
+                    voice = 'Tom'
             elif (outLang == 'ar'):
                 voice = 'Laila'
             elif (outLang == 'es'):
@@ -92,12 +100,22 @@ class SpeechAPI:
 
                 try:
                     if (voice != ''):
-                        say = subprocess.Popen(['say', '-v', voice, '"' + outText + '"', '-o', file, ])
+                        if (rate != ''):
+                            say = subprocess.Popen(['say', '-v', voice, '"' + outText + '"', '-r', str(rate), '-o', file, ])
+                        else:
+                            say = subprocess.Popen(['say', '-v', voice, '"' + outText + '"', '-o', file, ])
                     else:
-                        say = subprocess.Popen(['say', '"' + outText + '"', '-o', file, ])
+                        if (rate != ''):
+                            say = subprocess.Popen(['say', '"' + outText + '"', '-r', str(rate), '-o', file, ])
+                        else:
+                            say = subprocess.Popen(['say', '"' + outText + '"', '-o', file, ])
                     say.wait()
                     say.terminate()
                     say = None
+
+                    if (os.path.isfile(file)):
+                        if (os.path.getsize(file) <= 4096):
+                            os.remove(file)
 
                     if (os.path.exists(file)):
                         os.rename(file, outFile)

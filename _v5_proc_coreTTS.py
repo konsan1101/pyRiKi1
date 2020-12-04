@@ -256,6 +256,7 @@ class proc_coreTTS:
             # 処理
             path = self.path
             path_files = glob.glob(path + '*.txt')
+            path_files.sort()
             if (len(path_files) > 0):
 
                 #try:

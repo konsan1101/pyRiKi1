@@ -30,6 +30,7 @@ if __name__ == '__main__':
 
 
     files = glob.glob('narration/mp3/*.mp3')
+    files.sort()
 
     for file in files:
         file = file.replace('\\', '/')

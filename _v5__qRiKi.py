@@ -384,6 +384,7 @@ class qRiKi_class:
                     busy_flag = True
                     time.sleep(0.10)
                     break
+        return busy_flag
 
     def statusReset_speech(self, Flag=False):
         self.statusSet(qBusy_dev_cpu,   Flag)
@@ -442,7 +443,7 @@ class qRiKi_class:
             filename = qPath_s_TTS + stamp + '.' + str(id) + '.txt'
             try:
                 w = codecs.open(filename, 'w', 'utf-8')
-                w.write(txt)
+                w.write(text)
                 w.close()
                 w = None
                 return True

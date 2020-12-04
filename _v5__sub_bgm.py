@@ -112,6 +112,36 @@ qRdy__d_sendkey  = qRiKi.getValue('qRdy__d_sendkey'  )
 
 
 
+import _v5__qRiKi_key
+
+config_file = '_v5__sub_bgm_key.json'
+
+qRiKi_key = _v5__qRiKi_key.qRiKi_key_class()
+res, dic = qRiKi_key.getCryptJson(config_file=config_file, auto_crypt=False, )
+if (res == False):
+    dic['_crypt_']    = 'none'
+    dic['engine']     = 'VLC'
+    dic['path_winos'] = 'C:\\Users\\Public\\'
+    dic['path_macos'] = '/Users/Shared/'
+    dic['path_linux'] = '/users/kondou/Documents/'
+    dic['text_00']    = '自作ＢＧＭ'
+    dic['file_00']    = '_VLC_GB_プレイリスト.xspf'
+    dic['text_01']    = 'お気に入り音楽'
+    dic['file_01']    = '_VLC_etc_プレイリスト.xspf'
+    dic['text_02']    = 'BABYMETAL'
+    dic['file_02']    = '_VLC_BABYMETAL_プレイリスト.xspf'
+    dic['text_03']    = 'perfume'
+    dic['file_03']    = '_VLC_Perfume_プレイリスト.xspf'
+    dic['text_04']    = 'きゃりーぱみゅぱみゅ'
+    dic['file_04']    = '_VLC_きゃりーぱみゅぱみゅ_プレイリスト.xspf'
+    dic['text_05']    = 'ONE OK ROCK'
+    dic['file_05']    = '_VLC_ワンオク_プレイリスト.xspf'
+    dic['text_06']    = 'SEKAI NO OWARI'
+    dic['file_06']    = '_VLC_セカオワ_プレイリスト.xspf'
+    res = qRiKi_key.putCryptJson(config_file=config_file, put_dic=dic, )
+
+
+
 runMode = 'debug'
 
 
@@ -146,6 +176,49 @@ class main_bgm:
         self.bgm_file  = ''
         self.bgm_parm  = ''
         self.bgm_name  = ''
+
+        # 構成情報
+        json_file = '_v5__sub_bgm_key.json'
+        self.engine     = 'VLC'
+        self.path_winos = 'C:\\Users\\Public\\'
+        self.path_macos = '/Users/Shared/'
+        self.path_linux = '/users/kondou/Documents/'
+        self.text = {}
+        self.file = {}
+        self.text['00']  = '自作ＢＧＭ'
+        self.file['00']  = '_VLC_GB_プレイリスト.xspf'
+        self.text['01']  = 'お気に入り音楽'
+        self.file['01']  = '_VLC_etc_プレイリスト.xspf'
+        self.text['02']  = 'BABYMETAL'
+        self.file['02']  = '_VLC_BABYMETAL_プレイリスト.xspf'
+        self.text['03']  = 'perfume'
+        self.file['03']  = '_VLC_Perfume_プレイリスト.xspf'
+        self.text['04']  = 'きゃりーぱみゅぱみゅ'
+        self.file['04']  = '_VLC_きゃりーぱみゅぱみゅ_プレイリスト.xspf'
+        self.text['05']  = 'ONE OK ROCK'
+        self.file['05']  = '_VLC_ワンオク_プレイリスト.xspf'
+        self.text['06']  = 'SEKAI NO OWARI'
+        self.file['06']  = '_VLC_セカオワ_プレイリスト.xspf'
+        res, json_dic = qRiKi_key.getCryptJson(config_file=json_file, auto_crypt=False, )
+        if (res == True):
+            self.engine     = json_dic['engine']
+            self.path_winos = json_dic['path_winos']
+            self.path_macos = json_dic['path_macos']
+            self.path_linux = json_dic['path_linux']
+            self.text['00'] = json_dic['text_00']
+            self.file['00'] = json_dic['file_00']
+            self.text['01'] = json_dic['text_01']
+            self.file['01'] = json_dic['file_01']
+            self.text['02'] = json_dic['text_02']
+            self.file['02'] = json_dic['file_02']
+            self.text['03'] = json_dic['text_03']
+            self.file['03'] = json_dic['file_03']
+            self.text['04'] = json_dic['text_04']
+            self.file['04'] = json_dic['file_04']
+            self.text['05'] = json_dic['text_05']
+            self.file['05'] = json_dic['file_05']
+            self.text['06'] = json_dic['text_06']
+            self.file['06'] = json_dic['file_06']
 
     def __del__(self, ):
         qLog.log('info', self.proc_id, 'bye!', display=self.logDisp, )
@@ -367,48 +440,40 @@ class main_bgm:
             txt = proc_text.lower()
             procBgm = ''
 
-            if (txt == 'playlist 00'  ) or (txt == 'playlist 0') \
-            or (txt == 'playlist zero') \
-            or (txt == 'bgm') or (txt == 'garageband'):
-                procBgm =  '_00_'
+            if  (txt.find(u'プレイリスト') >= 0) or (txt.find('playlist') >= 0) or (txt.find('bgm') >= 0):
 
-            if (txt == 'playlist 01' ) or (txt == 'playlist 1') \
-            or (txt == 'playlist etc') or (txt == 'playlists etc'):
-                procBgm =  '_01_'
-
-            if (txt == 'playlist 02') or (txt == 'playlist 2') \
-            or (txt == 'babymetal'):
-                procBgm =  '_02_'
-
-            if (txt == 'playlist 03') or (txt == 'playlist 3') \
-            or (txt == 'perfume'):
-                procBgm =  '_03_'
-
-            if (txt == 'playlist 04') or (txt == 'playlist 4') \
-            or (txt == 'kyary pamyu pamyu'):
-                procBgm =  '_04_'
-
-            if (txt == 'playlist 05') or (txt == 'playlist 5') \
-            or (txt == 'one ok rock') or (txt == 'one ok'):
-                procBgm =  '_05_'
-
-            if (txt == 'playlist 06') or (txt == 'playlist 6') \
-            or (txt == 'the end of the world') or (txt == 'end of the world'):
-                procBgm =  '_06_'
-
-            if (txt == 'playlist') or (txt == 'playlist list') \
-            or (txt == 'list of playlists') or (txt == 'bgm list'):
-
-                speechs = []
-                speechs.append({ 'text':u'プレイリストゼロは、自作ＢＧＭです。', 'wait':0, })
-                speechs.append({ 'text':u'プレイリスト１は、お気に入り音楽です。', 'wait':0, })
-                speechs.append({ 'text':u'プレイリスト２は、「BABYMETAL」です。', 'wait':0, })
-                speechs.append({ 'text':u'プレイリスト３は、「perfume」です。', 'wait':0, })
-                speechs.append({ 'text':u'プレイリスト４は、「きゃりーぱみゅぱみゅ」です。', 'wait':0, })
-                speechs.append({ 'text':u'プレイリスト５は、「ONE OK ROCK」です。', 'wait':0, })
-                speechs.append({ 'text':u'プレイリスト６は、「SEKAI NO OWARI」です。', 'wait':0, })
-                speechs.append({ 'text':u'プレイリストを再生しますか？', 'wait':0, })
-                qRiKi.speech(id='speech', speechs=speechs, lang='', )
+                if   (txt.find('01') >= 0) or (txt.find('1') >= 0):
+                    procBgm =  '_01_'
+                elif (txt.find('02') >= 0) or (txt.find('2') >= 0):
+                    procBgm =  '_02_'
+                elif (txt.find('03') >= 0) or (txt.find('3') >= 0):
+                    procBgm =  '_03_'
+                elif (txt.find('04') >= 0) or (txt.find('4') >= 0):
+                    procBgm =  '_04_'
+                elif (txt.find('05') >= 0) or (txt.find('5') >= 0):
+                    procBgm =  '_05_'
+                elif (txt.find('06') >= 0) or (txt.find('6') >= 0):
+                    procBgm =  '_06_'
+                elif (txt.find('0') >= 0) or (txt.find(u'ゼロ') >= 0):
+                    procBgm =  '_00_'
+                elif (txt.find(u'リスト') >= 0) or (txt.find('list') >= 0):
+                    speechs = []
+                    #speechs.append({ 'text':u'プレイリストゼロは、自作ＢＧＭです。', 'wait':0, })
+                    #speechs.append({ 'text':u'プレイリスト１は、お気に入り音楽です。', 'wait':0, })
+                    #speechs.append({ 'text':u'プレイリスト２は、「BABYMETAL」です。', 'wait':0, })
+                    #speechs.append({ 'text':u'プレイリスト３は、「perfume」です。', 'wait':0, })
+                    #speechs.append({ 'text':u'プレイリスト４は、「きゃりーぱみゅぱみゅ」です。', 'wait':0, })
+                    #speechs.append({ 'text':u'プレイリスト５は、「ONE OK ROCK」です。', 'wait':0, })
+                    #speechs.append({ 'text':u'プレイリスト６は、「SEKAI NO OWARI」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリストゼロは、「' + self.text['00'] + u'」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリスト１は、　「' + self.text['01'] + u'」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリスト２は、　「' + self.text['02'] + u'」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリスト３は、　「' + self.text['03'] + u'」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリスト４は、　「' + self.text['04'] + u'」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリスト５は、　「' + self.text['05'] + u'」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリスト６は、　「' + self.text['06'] + u'」です。', 'wait':0, })
+                    speechs.append({ 'text':u'プレイリストを再生しますか？', 'wait':0, })
+                    qRiKi.speech(id='speech', speechs=speechs, lang='', )
 
             if (procBgm != ''):
 
@@ -433,32 +498,44 @@ class main_bgm:
         if (proc_text.lower() == '_start_') \
         or (proc_text.lower() == 'bgm') \
         or (proc_text.lower() == '_00_'):
-            self.bgm_file = u'_VLC_GB_プレイリスト.xspf'
+            #self.bgm_file = u'_VLC_GB_プレイリスト.xspf'
+            self.bgm_file = self.file['00']
             self.bgm_parm = '--qt-start-minimized'
 
         elif (proc_text.lower() == '_01_'):
-            self.bgm_file = u'_VLC_etc_プレイリスト.xspf'
+            #self.bgm_file = u'_VLC_etc_プレイリスト.xspf'
+            self.bgm_file = self.file['01']
 
         elif (proc_text.lower() == '_02_'):
-            self.bgm_file = u'_VLC_BABYMETAL_プレイリスト.xspf'
+            #self.bgm_file = u'_VLC_BABYMETAL_プレイリスト.xspf'
+            self.bgm_file = self.file['02']
 
         elif (proc_text.lower() == '_03_'):
-            self.bgm_file = u'_VLC_Perfume_プレイリスト.xspf'
+            #self.bgm_file = u'_VLC_Perfume_プレイリスト.xspf'
+            self.bgm_file = self.file['03']
 
         elif (proc_text.lower() == '_04_'):
-            self.bgm_file = u'_VLC_きゃりーぱみゅぱみゅ_プレイリスト.xspf'
+            #self.bgm_file = u'_VLC_きゃりーぱみゅぱみゅ_プレイリスト.xspf'
+            self.bgm_file = self.file['04']
 
         elif (proc_text.lower() == '_05_'):
-            self.bgm_file = u'_VLC_ワンオク_プレイリスト.xspf'
+            #self.bgm_file = u'_VLC_ワンオク_プレイリスト.xspf'
+            self.bgm_file = self.file['06']
 
         elif (proc_text.lower() == '_06_'):
-            self.bgm_file = u'_VLC_セカオワ_プレイリスト.xspf'
+            #self.bgm_file = u'_VLC_セカオワ_プレイリスト.xspf'
+            self.bgm_file = self.file['06']
 
         if (self.bgm_file != ''):
             if (os.name == 'nt'):
-                self.bgm_name = u'C:\\Users\\Public\\' + self.bgm_file
+                #self.bgm_name = u'C:\\Users\\Public\\' + self.bgm_file
+                self.bgm_name = self.path_winos + self.bgm_file
+            elif (qPLATFORM == 'darwin'):
+                #self.bgm_name = u'/users/kondou/Documents/' + self.bgm_file
+                self.bgm_name = self.path_macos + self.bgm_file
             else:
-                self.bgm_name = u'/users/kondou/Documents/' + self.bgm_file
+                #self.bgm_name = u'/users/kondou/Documents/' + self.bgm_file
+                self.bgm_name = self.path_linux + self.bgm_file
 
         # 開始
         if (self.bgm_file != ''):
@@ -470,21 +547,21 @@ class main_bgm:
             try:
                 if (os.name == 'nt'):
                     if (self.bgm_parm != ''):
-                        self.bgm_id = subprocess.Popen(['VLC', self.bgm_parm, self.bgm_name, ], \
+                        self.bgm_id = subprocess.Popen([self.engine, self.bgm_parm, self.bgm_name, ], \
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, )
                         self.bgm_start = time.time()
                     else:
-                        self.bgm_id = subprocess.Popen(['VLC', self.bgm_name, ], \
+                        self.bgm_id = subprocess.Popen([self.engine, self.bgm_name, ], \
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, )
                         self.bgm_start = time.time()
 
                 else:
                     if (self.bgm_parm != ''):
-                        self.bgm_id = subprocess.Popen(['open', '-a', 'VLC', self.bgm_name, ], \
+                        self.bgm_id = subprocess.Popen(['open', '-a', self.engine, self.bgm_name, ], \
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, )
                         self.bgm_start = time.time()
                     else:
-                        self.bgm_id = subprocess.Popen(['open', '-a', 'VLC', self.bgm_name, ], \
+                        self.bgm_id = subprocess.Popen(['open', '-a', self.engine, self.bgm_name, ], \
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, )
                         self.bgm_start = time.time()
             except Exception as e:
@@ -506,7 +583,8 @@ class main_bgm:
             qLog.log('info', self.proc_id, '' + u'play ' + self.bgm_file + ' stop', display=True,)
 
         # リセット
-        qFunc.kill('VLC', )
+        #qFunc.kill('VLC', )
+        qFunc.kill(self.engine, )
 
         # ビジー解除
         qFunc.statusSet(self.fileBsy, False)

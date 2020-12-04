@@ -1398,13 +1398,13 @@ def speech_batch(runMode, micDev,
                 if (txtInpLang != txtOutLang):
                     qLog2.log('info', '   ' + procId, 'Text Input   [' + txtText + '] ' + txtInpLang, display=True)
 
-                recfile = txtInput.replace(qPath_s_STT, '')
-                recfile = recfile.replace(qPath_s_TRA, '')
-                recfile = recfile.replace(qPath_s_TTS, '')
-                recfile = recfile.replace(qPath_work, '')
-                recfile = qPath_s_ctrl + recfile
+                #filename = txtInput.replace(qPath_s_STT, '')
+                #filename = filename.replace(qPath_s_TRA, '')
+                #filename = filename.replace(qPath_s_TTS, '')
+                #filename = filename.replace(qPath_work, '')
 
-                qFunc.txtsWrite(recfile, txts=[txtText], encoding='utf-8', exclusive=False, mode='w', )
+                #filename1 = qPath_s_ctrl + filename
+                #qFunc.txtsWrite(filename1, txts=[txtText], encoding='utf-8', exclusive=False, mode='w', )
 
     if (txtText != '' and txtInput != inpOutput):
 

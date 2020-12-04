@@ -20,10 +20,11 @@ import threading
 import subprocess
 
 from selenium.webdriver import Firefox, FirefoxOptions
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
-import requests as web
-import bs4
-import urllib.parse
+from bs4 import BeautifulSoup
 
 #print(os.path.dirname(__file__))
 #print(os.path.basename(__file__))
@@ -118,7 +119,151 @@ qRdy__d_sendkey  = qRiKi.getValue('qRdy__d_sendkey'  )
 
 
 
+import _v5__qRiKi_key
+
+config_file = '_v5__sub_browser_key.json'
+
+qRiKi_key = _v5__qRiKi_key.qRiKi_key_class()
+res, dic = qRiKi_key.getCryptJson(config_file=config_file, auto_crypt=False, )
+if (res == False):
+    dic['_crypt_']      = 'none'
+    dic['engine']       = 'firefox'
+    dic['url_home']     = 'https://google.co.jp'
+    dic['url_search']   = 'https://www.google.com/search?q='
+    dic['narou_home']   = 'https://syosetu.com/'
+    dic['narou_base']   = 'https://ncode.syosetu.com/'
+    dic['narou_speech'] = 'yes'
+    res = qRiKi_key.putCryptJson(config_file=config_file, put_dic=dic, )
+
+
+
 runMode = 'debug'
+
+
+
+def clear_tts(proc_id, ):
+
+    # TTSフォルダクリア
+    path = qPath_s_TTS
+    path_files = glob.glob(path + '*.' + proc_id + '.*')
+    path_files.sort()
+    if (len(path_files) > 0):
+        for f in path_files:
+            proc_file = f.replace('\\', '/')
+            print(proc_file)
+            qFunc.remove(proc_file)
+
+    # Playフォルダクリア
+    path = qPath_s_play
+    path_files = glob.glob(path + '*.' + proc_id + '.*')
+    path_files.sort()
+    if (len(path_files) > 0):
+        for f in path_files:
+            proc_file = f.replace('\\', '/')
+            print(proc_file)
+            qFunc.remove(proc_file)
+
+def html_narou_to_tts(abortQ=None, proc_id=None, base_url='', page_url='', html=None, autoPaging='yes', ):
+
+    # 中断指示Q クリア
+    if (not abortQ is None):
+        if (abortQ.qsize() > 0):
+            q_get  = abortQ.get()
+            abortQ.task_done()
+
+    # 無効 html ？
+    if (html == None):
+        return False
+
+    # ページ情報
+    page_sep = page_url.split('/')
+    page_id  = ''
+    page_seq = ''
+    if (len(page_sep) >= 1):
+        page_id  = page_sep[0]
+    if (len(page_sep) >= 2):
+        page_seq = page_sep[1]
+    print(page_seq)
+
+    # 無効 ページ ？
+    if (page_seq == ''):
+        return False
+    if (not page_seq.isnumeric()):
+        return False
+
+    # TTS 出力（タイトル）
+    try:
+        soup = BeautifulSoup(html, 'html.parser')
+        capter_title = ''
+        try:
+            capter_title = soup.find('p', class_='chapter_title')
+        except:
+            capter_title = soup.find('p', class_='margin_r20')
+        print(capter_title.text)
+        sub_title = soup.find('p', class_='novel_subtitle')
+        print(sub_title.text)
+        txt = 'ja,' + u'タイトル'
+        qRiKi.tts(id=proc_id, text=txt, idolSec=0, maxWait=0, )
+        time.sleep(1.2)
+        txt = 'ja,' + capter_title.text + ' ' + sub_title.text
+        qRiKi.tts(id=proc_id, text=txt, idolSec=0, maxWait=0, )
+        time.sleep(1.2)
+    except:
+        pass
+
+    # TTS 出力（本文）
+    for i in range(1, 9999):
+
+        # 中断処理
+        if (not abortQ is None):
+            if (abortQ.qsize() > 0):
+                q_get  = abortQ.get()
+                abortQ.task_done()
+                return False
+
+        try:
+            p_list = soup.find_all('p', id='L' + str(i))
+            if (len(p_list) == 0):
+                break
+            if (i == 1):
+                txt = 'ja,' + u'本文'
+                qRiKi.tts(id=proc_id, text=txt, idolSec=0, maxWait=0, )
+                time.sleep(1.2)
+            for p in p_list:
+                txt = p.text
+                print(txt)
+                txt = txt.replace(u'「', '')
+                txt = txt.replace(u'」', '')
+                txt = txt.replace(u'…', ' ')
+                txt = 'ja,' + txt
+                qRiKi.tts(id=proc_id, text=txt, idolSec=0, maxWait=0, )
+                time.sleep(1.2)
+        except:
+            pass
+
+    # 自動ページング
+    if (autoPaging != 'yes'):
+        return True
+    
+    # 音声待機
+    check = 5
+    while (check > 0):
+        if (qRiKi.statusWait_speech() == False): # busy
+            check -= 1
+        else:
+            check = 5
+        # 中断処理
+        if (not abortQ is None):
+            if (abortQ.qsize() > 0):
+                q_get  = abortQ.get()
+                abortQ.task_done()
+                return True
+
+    # ジャンプ
+    next_page = base_url + page_id + '/' + str(int(page_seq) + 1) + '/'
+    qFunc.txtsWrite(filename=qCtrl_control_self, txts=[next_page], exclusive=True, )
+
+    return True
 
 
 
@@ -150,6 +295,28 @@ class main_browser:
         self.browser_id    = None 
         self.browser_start = time.time() 
         self.browser_url   = ''
+        self.browser_html  = None
+        self.last_url      = None
+
+        self.batch_thread  = None
+        self.batch_abortQ  = queue.Queue()
+
+        # 構成情報
+        json_file = '_v5__sub_browser_key.json'
+        self.engine       = 'firefox'
+        self.url_home     = 'https://google.co.jp'
+        self.url_search   = 'https://www.google.com/search?q='
+        self.narou_home   = 'https://syosetu.com/'
+        self.narou_base   = 'https://ncode.syosetu.com/'
+        self.narou_speech = 'yes'
+        res, json_dic = qRiKi_key.getCryptJson(config_file=json_file, auto_crypt=False, )
+        if (res == True):
+            self.engine       = json_dic['engine']
+            self.url_home     = json_dic['url_home']
+            self.url_search   = json_dic['url_search']
+            self.narou_home   = json_dic['narou_home']
+            self.narou_base   = json_dic['narou_base']
+            self.narou_speech = json_dic['narou_speech']
 
     def __del__(self, ):
         qLog.log('info', self.proc_id, 'bye!', display=self.logDisp, )
@@ -276,6 +443,9 @@ class main_browser:
             if (control != ''):
                 self.sub_proc(control, )
 
+            # 検査
+            self.sub_check_url()
+
             # アイドリング
             slow = False
             if  (qFunc.statusCheck(qBusy_dev_cpu) == True):
@@ -380,7 +550,7 @@ class main_browser:
             #options.add_argument('-headless')
 
             # FirefoxのWebDriver作成
-            self.browser_id = Firefox(options=options)
+            self.browser_id   = Firefox(options=options)
 
             # ウィンドウサイズとズームを設定
             #driver.set_window_size(1920, 9999)
@@ -389,14 +559,17 @@ class main_browser:
         # URLを開く
         url   = ''
         if (proc_text == '_start_'):
-            url = 'https://google.co.jp'
+            url = self.url_home     #'https://google.co.jp'
             #self.browser_id.get(url)
         elif (proc_text[:4] == 'http'):
             url = proc_text
             #self.browser_id.get(url)
+        elif (proc_text == u'なろう') or (proc_text == u'本好き'):
+            url = self.narou_home     #'https://syosetu.com/'
+            #self.browser_id.get(url)
 
         if (url == ''):
-            url = 'https://www.google.com/search?q=' + proc_text
+            url = self.url_search + proc_text     #'https://www.google.com/search?q='
             #self.browser_id.get(url)
 
         # 開く
@@ -405,9 +578,6 @@ class main_browser:
         except Exception as e:
             self.sub_stop('_stop_', )
 
-        # 画像保管
-        #self.browser_id.save_screenshot(file_name)
-
 
 
     # 停止
@@ -415,17 +585,76 @@ class main_browser:
 
         if (not self.browser_id is None):
 
+            # 音声読み上げキャンセル
+            if (not self.batch_thread is None):
+                self.batch_abortQ.put('_abort_')
+                time.sleep(2.00)
+                self.batch_thread = None
+            clear_tts(self.proc_id, )
+
             # 停止
             self.browser_id.quit()
             self.browser_id = None
 
         # リセット
-        qFunc.kill('firefox', )
+        #qFunc.kill('firefox', )
+        qFunc.kill(self.engine, )
 
         # ビジー解除
         qFunc.statusSet(self.fileBsy, False)
         if (str(self.id) == '0'):
             qFunc.statusSet(qBusy_d_browser, False)
+
+
+
+    # 検査
+    def sub_check_url(self, ):
+
+        # 表示中？
+        if (self.browser_id is None):
+            self.browser_url  = None
+            self.browser_html = None
+            self.last_url     = None
+            return False
+
+        # 変化？
+        self.browser_url = self.browser_id.current_url
+        if (self.browser_url == self.last_url):
+            return False
+
+        #visibility_of_all_elements_located
+        #ページの全要素がDOM上に現れ, かつheight・widthが0以上になるまで待機
+        self.browser_wait = WebDriverWait(self.browser_id, 10)
+        element = self.browser_wait.until(EC.visibility_of_all_elements_located)
+
+        # 画像保管
+        self.browser_html = self.browser_id.page_source
+        self.last_url     = self.browser_url
+        print(self.browser_url)
+        #self.browser_id.save_screenshot(file_name)
+
+        # 音声読み上げキャンセル
+        if (not self.batch_thread is None):
+            self.batch_abortQ.put('_abort_')
+            time.sleep(2.00)
+            self.batch_thread = None
+        clear_tts(self.proc_id, )
+
+        # なろうページ読み上げ
+        if (self.narou_speech == 'yes'):
+            base_url = self.narou_base     #'https://ncode.syosetu.com/'
+            if (self.browser_url[:len(base_url)] == base_url):
+
+                page_url = self.browser_url[len(base_url):]
+                # threading
+                self.batch_thread = threading.Thread(target=html_narou_to_tts, args=(
+                        self.batch_abortQ, self.proc_id, 
+                        base_url, page_url, self.browser_html, 'yes', 
+                        ))
+                self.batch_thread.setDaemon(True)
+                self.batch_thread.start()
+
+        return True
 
 
 
@@ -508,9 +737,11 @@ if __name__ == '__main__':
                     qFunc.txtsWrite(qCtrl_control_self ,txts=['http://yahoo.co.jp'], encoding='utf-8', exclusive=True, mode='w', )
                     time.sleep(5.00)
                     qFunc.txtsWrite(qCtrl_control_self ,txts=[u'姫路城'], encoding='utf-8', exclusive=True, mode='w', )
+                    time.sleep(5.00)
+                    qFunc.txtsWrite(qCtrl_control_self ,txts=[u'本好き'], encoding='utf-8', exclusive=True, mode='w', )
 
             # テスト終了
-            if  ((time.time() - main_start) > 30):
+            if  ((time.time() - main_start) > 40):
                     qFunc.txtsWrite(qCtrl_control_self ,txts=['_stop_'], encoding='utf-8', exclusive=True, mode='w', )
                     time.sleep(5.00)
                     qFunc.txtsWrite(qCtrl_control_self ,txts=['_end_'], encoding='utf-8', exclusive=True, mode='w', )

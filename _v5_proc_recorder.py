@@ -118,11 +118,13 @@ import _v5__qRiKi_key
 config_file = '_v5_proc_recorder_key.json'
 
 qRiKi_key = _v5__qRiKi_key.qRiKi_key_class()
-res, dic = qRiKi_key.getCryptJson(config_file=config_file)
+res, dic = qRiKi_key.getCryptJson(config_file=config_file, auto_crypt=False, )
 if (res == False):
     dic['_crypt_'] = 'none'
+    dic['dspInfo'] = 'yes'
     dic['inpFPS']  = '10'
     dic['outFPS']  = '10'
+    dic['mov2jpg'] = 'yes'
     res = qRiKi_key.putCryptJson(config_file=config_file, put_dic=dic, )
 
 
@@ -366,7 +368,7 @@ def movie2jpg(proc_id, batch_index, index=0, dev='desktop',
 
 def movie2mp4(proc_id, batch_index, index=0, dev='desktop', 
                 inpPath='', inpNamev='', inpNamea='', 
-                outPath='', outFPS=10, ):
+                outPath='', outFPS='10', ):
 
     # パラメータ
     inpFilev = inpPath + inpNamev
@@ -406,7 +408,7 @@ def movie2mp4(proc_id, batch_index, index=0, dev='desktop',
 
 def movie_proc(runMode, proc_id, batch_index, index, dev, 
                 rec_filev, rec_namev, rec_filea, rec_namea, 
-                outFPS, thread_wait, cn_s, ):
+                outFPS, mov2jpg, dspInfo, thread_wait, cn_s, ):
 
     # ログ
     qLog.log('info', proc_id, 'thread ' + str(batch_index) + ' : begin, wait=' + str(thread_wait), )
@@ -452,23 +454,24 @@ def movie_proc(runMode, proc_id, batch_index, index, dev,
             qFunc.txtsWrite(qCtrl_result_recorder, txts=['_mp4?_'], encoding='utf-8', exclusive=True, mode='w', )
 
     # サムネイル抽出
-    wrkPath = qPath_work + 'movie2jpeg' + '{:02}'.format(index) + '/'
-    res = movie2jpg(proc_id, batch_index, index=index, dev=dev,
-                inpPath=qPath_work, inpNamev=rec_namev, 
-                outPath=qPath_rec, wrkPath=wrkPath, sfps=1, scene=0.1, )
-    if (res != False):
-        for f in res:
-            outFile = f.replace(qPath_rec, '')
-            qFunc.copy(f, qPath_d_movie  + outFile)
-            if (runMode != 'assistant'):
-                qFunc.copy(f, qPath_d_upload + outFile)
-            if (qPath_videos != ''):
-                folder = qPath_videos + yyyymmdd + '/'
-                qFunc.makeDirs(folder)
-                qFunc.copy(f, folder + outFile)
+    if (mov2jpg.lower() == 'yes'):
+        wrkPath = qPath_work + 'movie2jpeg' + '{:02}'.format(index) + '/'
+        res = movie2jpg(proc_id, batch_index, index=index, dev=dev,
+                    inpPath=qPath_work, inpNamev=rec_namev, 
+                    outPath=qPath_rec, wrkPath=wrkPath, sfps=1, scene=0.1, )
+        if (res != False):
+            for f in res:
+                outFile = f.replace(qPath_rec, '')
+                qFunc.copy(f, qPath_d_movie  + outFile)
+                if (runMode != 'assistant'):
+                    qFunc.copy(f, qPath_d_upload + outFile)
+                if (qPath_videos != ''):
+                    folder = qPath_videos + yyyymmdd + '/'
+                    qFunc.makeDirs(folder)
+                    qFunc.copy(f, folder + outFile)
 
-            # ログ
-            qLog.log('debug', proc_id, 'thread ' + str(batch_index) + ' : ' + rec_namev + u' → ' + outFile, )
+                # ログ
+                qLog.log('debug', proc_id, 'thread ' + str(batch_index) + ' : ' + rec_namev + u' → ' + outFile, )
 
     # ワーク削除
     if (rec_filev != ''):
@@ -480,7 +483,8 @@ def movie_proc(runMode, proc_id, batch_index, index, dev,
     qLog.log('info', proc_id, 'thread ' + str(batch_index) + ' : complete', )
 
     # ガイド表示
-    cn_s.put(['_guide_', 'rec ok (ch=' + str(index) + ') ' + dev])
+    if (dspInfo.lower() == 'yes'):
+        cn_s.put(['_guide_', 'rec ok (ch=' + str(index) + ') ' + dev])
 
 
 
@@ -537,14 +541,20 @@ class proc_recorder:
             self.batch_thread[i] = None
 
         json_file = '_v5_proc_recorder_key.json'
-        self.inpFPS = 10
-        self.outFPS = 10
+        self.dspInfo = 'yes'
+        self.inpFPS  = '10'
+        self.outFPS  = '10'
+        self.mov2jpg = 'yes'
         res, json_dic = qRiKi_key.getCryptJson(config_file=json_file, auto_crypt=False, )
         if (res == True):
-            self.inpFPS = json_dic['inpFPS']
-            self.outFPS = json_dic['outFPS']
-        qLog.log('info', self.proc_id, 'inpFPS = ' + str(self.inpFPS), display=self.logDisp, )
-        qLog.log('info', self.proc_id, 'outFPS = ' + str(self.outFPS), display=self.logDisp, )
+            self.dspInfo = json_dic['dspInfo']
+            self.inpFPS  = json_dic['inpFPS']
+            self.outFPS  = json_dic['outFPS']
+            self.mov2jpg = json_dic['mov2jpg']
+        qLog.log('info', self.proc_id, 'dspInfo = ' + str(self.dspInfo), display=self.logDisp, )
+        qLog.log('info', self.proc_id, 'inpFPS  = ' + str(self.inpFPS ), display=self.logDisp, )
+        qLog.log('info', self.proc_id, 'outFPS  = ' + str(self.outFPS ), display=self.logDisp, )
+        qLog.log('info', self.proc_id, 'mov2jpg = ' + str(self.mov2jpg), display=self.logDisp, )
 
     def __del__(self, ):
         qLog.log('info', self.proc_id, 'bye!', display=self.logDisp, )
@@ -928,7 +938,8 @@ class proc_recorder:
                         qLog.log('info', self.proc_id, '' + rec_namea + ' rec start (ch=' + str(index) + ') ' + dev, display=True,)
 
                     # ガイド表示
-                    cn_s.put(['_guide_', 'rec start (ch=' + str(index) + ') ' + dev])
+                    if (self.dspInfo.lower() == 'yes'):
+                        cn_s.put(['_guide_', 'rec start (ch=' + str(index) + ') ' + dev])
 
 
 
@@ -979,7 +990,8 @@ class proc_recorder:
                     qLog.log('info', self.proc_id, '' + rec_namev + ' rec stop  (ch=' + str(index) + ') ' + dev, display=True,)
 
                     # ガイド表示
-                    #cn_s.put(['_guide_', 'rec ok (ch=' + str(index) + ') !'])
+                    #if (self.dspInfo.lower() == 'yes'):
+                    #    cn_s.put(['_guide_', 'rec ok (ch=' + str(index) + ') !'])
 
             else:
                     qLog.log('error', self.proc_id, '' + rec_namev + ' rec err   (ch=' + str(index) + ') ' + dev, display=True,)
@@ -989,7 +1001,8 @@ class proc_recorder:
                     rec_namea = ''
 
                     # ガイド表示
-                    cn_s.put(['_guide_', 'rec error (ch=' + str(index) + ') '])
+                    if (self.dspInfo.lower() == 'yes'):
+                        cn_s.put(['_guide_', 'rec error (ch=' + str(index) + ') '])
 
             if (rec_namea != ''):
                 if (os.path.exists(rec_filea)):
@@ -1008,7 +1021,7 @@ class proc_recorder:
                 self.batch_thread[self.batch_index] = threading.Thread(target=movie_proc, args=(
                     self.runMode, self.proc_id, self.batch_index, index, dev,
                     rec_filev, rec_namev, rec_filea, rec_namea,
-                    self.outFPS, thread_wait, cn_s,
+                    self.outFPS, self.mov2jpg, self.dspInfo, thread_wait, cn_s,
                     ))
                 self.batch_thread[self.batch_index].setDaemon(True)
                 self.batch_thread[self.batch_index].start()
@@ -1017,7 +1030,7 @@ class proc_recorder:
                 movie_proc(
                     self.runMode, self.proc_id, self.batch_index, index, dev,
                     rec_filev, rec_namev, rec_filea, rec_namea,
-                    self.outFPS, thread_wait, cn_s,
+                    self.outFPS, self.mov2jpg, self.dspInfo, thread_wait, cn_s,
                     )
 
         # いちばん古い録画 -> index

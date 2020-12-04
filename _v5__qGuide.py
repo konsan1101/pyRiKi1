@@ -18,6 +18,9 @@ import numpy as np
 import cv2
 from PIL import Image, ImageDraw, ImageFont
 
+import platform
+qPLATFORM = platform.system().lower() #windows,darwin,linux
+
 
 
 qPath_fonts     = '_fonts/'
@@ -114,12 +117,15 @@ class qGuide_class:
         # 定義
         self.close()
         try:
+            no_titlebar = True
+            if (qPLATFORM == 'darwin'):
+                no_titlebar = False
             self.window = sg.Window(self.title, layout,
                             keep_on_top=True,
                             auto_size_text=False,
                             auto_size_buttons=False,
                             grab_anywhere=True,
-                            no_titlebar=True,
+                            no_titlebar=no_titlebar,
                             default_element_size=(12, 1),
                             default_button_element_size=(12, 1),
                             return_keyboard_events=True,
@@ -171,43 +177,49 @@ class qGuide_class:
 
     def open(self, ):
         # 更新・表示
-        try:
+        #try:
+        if True:
             if (not self.window is None):
+                self.window.un_hide()
                 self.window.refresh()
                 return True
-        except:
-            pass
+        #except:
+        #    pass
         return False
 
     def read(self, ):
         # 読取
-        try:
+        #try:
+        if True:
             if (not self.window is None):
                 event, values = self.window.read(timeout=20, timeout_key='timeout')
                 return event, values
-        except:
-            pass
+        #except:
+        #    pass
         return False, False
 
     def close(self, ):
         # 消去
         if (not self.window is None):
-            try:
+            #try:
+            if True:
                 self.read()
                 self.window.hide()
-            except:
-                pass
+                self.window.refresh()
+            #except:
+            #    pass
         return True
 
     def terminate(self, ):
         # 終了
         if (not self.window is None):
-            try:
+            #try:
+            if True:
                 self.read()
                 self.window.close()
                 del self.window
-            except:
-                pass
+            #except:
+            #    pass
         self.window = None
         return True
 

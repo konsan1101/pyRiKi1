@@ -14,6 +14,69 @@ import time
 import PySimpleGUI as sg
 import psutil
 
+import platform
+qPLATFORM = platform.system().lower() #windows,darwin,linux
+
+
+
+import _v5__qRiKi_key
+
+config_file = '_v5__main__gui_key.json'
+
+qRiKi_key = _v5__qRiKi_key.qRiKi_key_class()
+res, dic = qRiKi_key.getCryptJson(config_file=config_file, auto_crypt=False, )
+if (res == False):
+    dic['_crypt_'] = 'none'
+    dic['btn11'] = 'ＢＧＭ開始'
+    dic['cmd11'] = 'RiKi,ＢＧＭ開始'
+    dic['btn12'] = 'ブラウザ開始'
+    dic['cmd12'] = 'RiKi,ブラウザ開始'
+    dic['btn13'] = '動画開始'
+    dic['cmd13'] = 'RiKi,動画開始'
+    dic['btn14'] = ''
+    dic['cmd14'] = '14'
+    dic['btn15'] = 'プログラム開始'
+    dic['cmd15'] = 'RiKi,プログラム開始'
+    dic['btn16'] = '全て終了'
+    dic['cmd16'] = 'RiKi,ＢＧＭ・ブラウザ・動画・プログラム終了'
+    dic['btn21'] = 'カメラ開始'
+    dic['cmd21'] = 'RiKi,カメラ開始'
+    dic['btn22'] = 'ミラー開始'
+    dic['cmd22'] = 'RiKi,ミラー開始'
+    dic['btn23'] = ''
+    dic['cmd23'] = '23'
+    dic['btn24'] = ''
+    dic['cmd24'] = '24'
+    dic['btn25'] = ''
+    dic['cmd25'] = '25'
+    dic['btn26'] = '全て終了'
+    dic['cmd26'] = 'RiKi,カメラ終了'
+    dic['btn31'] = '１分記録'
+    dic['cmd31'] = 'RiKi,１分記録'
+    dic['btn32'] = '記録開始'
+    dic['cmd32'] = 'RiKi,記録開始'
+    dic['btn33'] = '録画開始'
+    dic['cmd33'] = 'RiKi,録画開始'
+    dic['btn34'] = 'テレワーク開始'
+    dic['cmd34'] = 'RiKi,テレワーク開始'
+    dic['btn35'] = ''
+    dic['cmd35'] = '35'
+    dic['btn36'] = '全て終了'
+    dic['cmd36'] = 'RiKi,記録・録画・テレワーク終了'
+    dic['btn41'] = 'リセット'
+    dic['cmd41'] = 'RiKi,リセット'
+    dic['btn42'] = 'リブート'
+    dic['cmd42'] = 'RiKi,リブート'
+    dic['btn43'] = ''
+    dic['cmd43'] = '43'
+    dic['btn44'] = ''
+    dic['cmd44'] = '44'
+    dic['btn45'] = ''
+    dic['cmd45'] = '45'
+    dic['btn46'] = 'システム終了'
+    dic['cmd46'] = 'RiKi,システム終了'
+    res = qRiKi_key.putCryptJson(config_file=config_file, put_dic=dic, )
+
 
 
 class sgDashGraph(object):
@@ -85,6 +148,116 @@ class main_gui_class:
 
     def init(self, alpha_channel=1,):
 
+        # メニュー
+        json_file = '_v5__main__gui_key.json'
+        dic_btn = {}
+        dic_cmd = {}
+        dic_btn['11'] = 'ブラウザ開始'
+        dic_cmd['11'] = 'RiKi,ブラウザ開始'
+        dic_btn['12'] = 'ブラウザ終了'
+        dic_cmd['12'] = 'RiKi,ブラウザ終了'
+        dic_btn['13'] = ''
+        dic_cmd['13'] = '13'
+        dic_btn['14'] = ''
+        dic_cmd['14'] = '14'
+        dic_btn['15'] = 'プログラム開始'
+        dic_cmd['15'] = 'RiKi,プログラム開始'
+        dic_btn['16'] = 'プログラム終了'
+        dic_cmd['16'] = 'RiKi,プログラム終了'
+        dic_btn['21'] = 'カメラ開始'
+        dic_cmd['21'] = 'RiKi,カメラ開始'
+        dic_btn['22'] = 'ミラー開始'
+        dic_cmd['22'] = 'RiKi,ミラー開始'
+        dic_btn['23'] = ''
+        dic_cmd['23'] = '23'
+        dic_btn['24'] = ''
+        dic_cmd['24'] = '24'
+        dic_btn['25'] = ''
+        dic_cmd['25'] = '25'
+        dic_btn['26'] = '全て終了'
+        dic_cmd['26'] = 'RiKi,カメラ終了'
+        dic_btn['31'] = '１分記録'
+        dic_cmd['31'] = 'RiKi,１分記録'
+        dic_btn['32'] = '記録開始'
+        dic_cmd['32'] = 'RiKi,記録開始'
+        dic_btn['33'] = '録画開始'
+        dic_cmd['33'] = 'RiKi,録画開始'
+        dic_btn['34'] = 'テレワーク開始'
+        dic_cmd['34'] = 'RiKi,テレワーク開始'
+        dic_btn['35'] = ''
+        dic_cmd['35'] = '35'
+        dic_btn['36'] = '全て終了'
+        dic_cmd['36'] = 'RiKi,記録・録画・テレワーク終了'
+        dic_btn['41'] = 'リセット'
+        dic_cmd['41'] = 'RiKi,リセット'
+        dic_btn['42'] = 'リブート'
+        dic_cmd['42'] = 'RiKi,リブート'
+        dic_btn['43'] = ''
+        dic_cmd['43'] = '43'
+        dic_btn['44'] = ''
+        dic_cmd['44'] = '44'
+        dic_btn['45'] = ''
+        dic_cmd['45'] = '45'
+        dic_btn['46'] = 'システム終了'
+        dic_cmd['46'] = 'RiKi,システム終了'
+        res, json_dic = qRiKi_key.getCryptJson(config_file=json_file, auto_crypt=False, )
+        if (res == True):
+            dic_btn['11'] = json_dic['btn11']
+            dic_cmd['11'] = json_dic['cmd11']
+            dic_btn['12'] = json_dic['btn12']
+            dic_cmd['12'] = json_dic['cmd12']
+            dic_btn['13'] = json_dic['btn13']
+            dic_cmd['13'] = json_dic['cmd13']
+            dic_btn['14'] = json_dic['btn14']
+            dic_cmd['14'] = json_dic['cmd14']
+            dic_btn['15'] = json_dic['btn15']
+            dic_cmd['15'] = json_dic['cmd15']
+            dic_btn['16'] = json_dic['btn16']
+            dic_cmd['16'] = json_dic['cmd16']
+            dic_btn['21'] = json_dic['btn21']
+            dic_cmd['21'] = json_dic['cmd21']
+            dic_btn['22'] = json_dic['btn22']
+            dic_cmd['22'] = json_dic['cmd22']
+            dic_btn['23'] = json_dic['btn23']
+            dic_cmd['23'] = json_dic['cmd23']
+            dic_btn['24'] = json_dic['btn24']
+            dic_cmd['24'] = json_dic['cmd24']
+            dic_btn['25'] = json_dic['btn25']
+            dic_cmd['25'] = json_dic['cmd25']
+            dic_btn['26'] = json_dic['btn26']
+            dic_cmd['26'] = json_dic['cmd26']
+            dic_btn['31'] = json_dic['btn31']
+            dic_cmd['31'] = json_dic['cmd31']
+            dic_btn['32'] = json_dic['btn32']
+            dic_cmd['32'] = json_dic['cmd32']
+            dic_btn['33'] = json_dic['btn33']
+            dic_cmd['33'] = json_dic['cmd33']
+            dic_btn['34'] = json_dic['btn34']
+            dic_cmd['34'] = json_dic['cmd34']
+            dic_btn['35'] = json_dic['btn35']
+            dic_cmd['35'] = json_dic['cmd35']
+            dic_btn['36'] = json_dic['btn36']
+            dic_cmd['36'] = json_dic['cmd36']
+            dic_btn['41'] = json_dic['btn41']
+            dic_cmd['41'] = json_dic['cmd41']
+            dic_btn['42'] = json_dic['btn42']
+            dic_cmd['42'] = json_dic['cmd42']
+            dic_btn['43'] = json_dic['btn43']
+            dic_cmd['43'] = json_dic['cmd43']
+            dic_btn['44'] = json_dic['btn44']
+            dic_cmd['44'] = json_dic['cmd44']
+            dic_btn['45'] = json_dic['btn45']
+            dic_cmd['45'] = json_dic['cmd45']
+            dic_btn['46'] = json_dic['btn46']
+            dic_cmd['46'] = json_dic['cmd46']
+
+        dic_color = {}
+        for id in dic_btn:
+            if (dic_btn[id] != ''):
+                dic_color[id] = ['black', 'white']
+            else:
+                dic_color[id] = ['white', 'black']
+
         # pySimpleGUI
         sg.theme('Black')
         sg.set_options(element_padding=(0,0), margins=(1,1), border_width=0)
@@ -99,68 +272,68 @@ class main_gui_class:
                     # Extention
                     sg.Frame(layout=[
                             [sg.Text('')],
-                            [sg.Button('プログラム開始', key=u'RiKi,プログラム開始', size=(18,2))],
+                            [sg.Button(dic_btn['11'], key=dic_cmd['11'], size=(18,2), button_color=dic_color['11'])],
                             [sg.Text('')],
-                            [sg.Button('プログラム終了', key=u'RiKi,プログラム終了', size=(18,2))],
+                            [sg.Button(dic_btn['12'], key=dic_cmd['12'], size=(18,2), button_color=dic_color['12'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'13', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['13'], key=dic_cmd['13'], size=(18,2), button_color=dic_color['13'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'14', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['14'], key=dic_cmd['14'], size=(18,2), button_color=dic_color['14'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'15', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['15'], key=dic_cmd['15'], size=(18,2), button_color=dic_color['15'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'16', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['16'], key=dic_cmd['16'], size=(18,2), button_color=dic_color['16'])],
                             [sg.Text('')],
                             [sg.Text('Now Telework !', key='_STS_TELEWORK_', size=(18,1), justification='center', background_color='gray')],
                         ], title='Extention Command'),
                     # vision
                     sg.Frame(layout=[
                             [sg.Text('')],
-                            [sg.Button('カメラ開始', key=u'RiKi,カメラ開始', size=(18,2))],
+                            [sg.Button(dic_btn['21'], key=dic_cmd['21'], size=(18,2), button_color=dic_color['21'])],
                             [sg.Text('')],
-                            [sg.Button('ミラー開始', key=u'RiKi,ミラー開始', size=(18,2))],
+                            [sg.Button(dic_btn['22'], key=dic_cmd['22'], size=(18,2), button_color=dic_color['22'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'23', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['23'], key=dic_cmd['23'], size=(18,2), button_color=dic_color['23'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'24', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['24'], key=dic_cmd['24'], size=(18,2), button_color=dic_color['24'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'25', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['25'], key=dic_cmd['25'], size=(18,2), button_color=dic_color['25'])],
                             [sg.Text('')],
-                            [sg.Button('全て終了', key=u'RiKi,カメラ終了', size=(18,2))],
+                            [sg.Button(dic_btn['26'], key=dic_cmd['26'], size=(18,2), button_color=dic_color['26'])],
                             [sg.Text('')],
                             [sg.Text('')],
                         ], title='Vision Command'),
                     # desktop
                     sg.Frame(layout=[
                             [sg.Text('')],
-                            [sg.Button('テレワーク開始', key=u'RiKi,テレワーク開始', size=(18,2))],
+                            [sg.Button(dic_btn['31'], key=dic_cmd['31'], size=(18,2), button_color=dic_color['31'])],
                             [sg.Text('')],
-                            [sg.Button('１分記録', key=u'RiKi,１分記録', size=(18,2))],
+                            [sg.Button(dic_btn['32'], key=dic_cmd['32'], size=(18,2), button_color=dic_color['32'])],
                             [sg.Text('')],
-                            [sg.Button('記録開始', key=u'RiKi,記録開始', size=(18,2))],
+                            [sg.Button(dic_btn['33'], key=dic_cmd['33'], size=(18,2), button_color=dic_color['33'])],
                             [sg.Text('')],
-                            [sg.Button('録画開始', key=u'RiKi,録画開始', size=(18,2))],
+                            [sg.Button(dic_btn['34'], key=dic_cmd['34'], size=(18,2), button_color=dic_color['34'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'35', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['35'], key=dic_cmd['35'], size=(18,2), button_color=dic_color['35'])],
                             [sg.Text('')],
-                            [sg.Button('全て終了', key=u'RiKi,記録・録画・テレワーク終了', size=(18,2))],
+                            [sg.Button(dic_btn['36'], key=dic_cmd['36'], size=(18,2), button_color=dic_color['36'])],
                             [sg.Text('')],
                             [sg.Text('Now Recording !', key='_STS_RECORD_', size=(18,1), justification='center', background_color='gray')],
                         ], title='Desktop Command'),
                     # kernel
                     sg.Frame(layout=[
                             [sg.Text('')],
-                            [sg.Button('リセット', key=u'RiKi,リセット', size=(18,2))],
+                            [sg.Button(dic_btn['41'], key=dic_cmd['41'], size=(18,2), button_color=dic_color['41'])],
                             [sg.Text('')],
-                            [sg.Button('リブート', key=u'RiKi,リブート', size=(18,2))],
+                            [sg.Button(dic_btn['42'], key=dic_cmd['42'], size=(18,2), button_color=dic_color['42'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'43', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['43'], key=dic_cmd['43'], size=(18,2), button_color=dic_color['43'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'44', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['44'], key=dic_cmd['44'], size=(18,2), button_color=dic_color['44'])],
                             [sg.Text('')],
-                            [sg.Button('', key=u'45', size=(18,2), button_color=('white','black'))],
+                            [sg.Button(dic_btn['45'], key=dic_cmd['45'], size=(18,2), button_color=dic_color['45'])],
                             [sg.Text('')],
-                            [sg.Button('システム終了', key=u'RiKi,システム終了', size=(18,2))],
+                            [sg.Button(dic_btn['46'], key=dic_cmd['46'], size=(18,2), button_color=dic_color['46'])],
                             [sg.Text('')],
                             [sg.Text('Speech READY !', key='_STS_SPEECH_', size=(18,1), justification='center', background_color='gray')],
                         ], title='Kernel Command'),
@@ -187,9 +360,12 @@ class main_gui_class:
         self.close()
         #try:
         if True:
+            no_titlebar = True
+            if (qPLATFORM == 'darwin'):
+                no_titlebar = False
             self.window = sg.Window('Power of AI, RiKi, ', layout,
                             keep_on_top=True,
-                            no_titlebar=True,
+                            no_titlebar=no_titlebar,
                             alpha_channel=alpha_channel,
                             finalize=True,
                             size=(760, 480),
@@ -225,12 +401,14 @@ class main_gui_class:
 
     def open(self, ):
         # 更新・表示
-        try:
+        #try:
+        if True:
             if (not self.window is None):
+                self.window.un_hide()
                 self.window.refresh()
                 return True
-        except:
-            pass
+        #except:
+        #    pass
         return False
 
     def read(self, ):
@@ -267,12 +445,13 @@ class main_gui_class:
             self.window['_STS_TELEWORK_'].update('Now Telework !', background_color='magenta')
 
         # 読取
-        try:
+        #try:
+        if True:
             if (not self.window is None):
                 event, values = self.window.read(timeout=20, timeout_key='-timeout-')
                 return event, values
-        except:
-            pass
+        #except:
+        #    pass
         return False, False
 
     def statusSet(self, key, value):
@@ -287,22 +466,25 @@ class main_gui_class:
     def close(self, ):
         # 消去
         if (not self.window is None):
-            try:
+            #try:
+            if True:
                 self.read()
                 self.window.hide()
-            except:
-                pass
+                self.window.refresh()
+            #except:
+            #    pass
         return True
 
     def terminate(self, ):
         # 終了
         if (not self.window is None):
-            try:
+            #try:
+            if True:
                 self.read()
                 self.window.close()
                 del self.window
-            except:
-                pass
+            #except:
+            #    pass
         self.window = None
         return True
 

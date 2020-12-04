@@ -242,7 +242,10 @@ class proc_playvoice:
             # 処理
             path = self.path
             path_files = glob.glob(path + '*')
-            if (len(path_files) > 0):
+            path_files.sort()
+            #if (len(path_files) > 0):
+            # フォルダ読み直しループ
+            while (len(path_files) > 0):
 
                 #try:
                 if (True):
@@ -349,18 +352,24 @@ class proc_playvoice:
                                     sox=subprocess.Popen(['sox', '-q', work_file, '-d', '--norm', ], \
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, )
 
-                                    if (self.runMode=='debug') \
-                                    or (self.runMode=='hud') \
-                                    or (self.runMode=='live') \
-                                    or (self.runMode=='translator'):
+                                    #if (self.runMode == 'debug') \
+                                    #or (self.runMode == 'hud') \
+                                    #or (self.runMode == 'live') \
+                                    #or (self.runMode == 'translator'):
+                                    if (self.runMode != 'speech'):
                                         sox.wait()
                                         sox.terminate()
                                         sox = None
 
                                 time.sleep(0.50)
+                                break #１つ再生したらフォルダ読み直し
 
                 #except Exception as e:
                 #    pass
+
+                # フォルダ読み直し
+                path_files = glob.glob(path + '*')
+                path_files.sort()
 
 
 

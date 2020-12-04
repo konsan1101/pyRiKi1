@@ -1,5 +1,5 @@
 @ECHO OFF
-cd "C:\Users\kondou\Documents\GitHub\pycv5"
+cd "C:\Users\kondou\Documents\GitHub\pyRiKi1"
 
 rem -----------
 rem stand alone

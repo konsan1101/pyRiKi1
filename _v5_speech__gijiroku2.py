@@ -36,6 +36,7 @@ if __name__ == '__main__':
 
 
     files = glob.glob('gijiroku/stt/*.txt')
+    files.sort()
 
     for file in files:
         file = file.replace('\\', '/')

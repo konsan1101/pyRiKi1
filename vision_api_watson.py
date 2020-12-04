@@ -152,7 +152,7 @@ class VisionAPI:
                             accept_language = lang,
                             ).get_result()
 
-                    #print(json.dumps(res, indent=2))
+                    #print(json.dumps(res, indent=4, ensure_ascii=False, ))
                     #print(res['images'][0]['classifiers'][0]['classes'])
 
                     classes = ''
@@ -196,7 +196,7 @@ class VisionAPI:
                             accept_language = lang,
                             ).get_result()
 
-                    #print(json.dumps(res, indent=2))
+                    #print(json.dumps(res, indent=4, ensure_ascii=False, ))
                     #print(res['images'][0]['classifiers'][0]['classes'])
 
                     res_text = {}

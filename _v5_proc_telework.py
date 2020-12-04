@@ -454,7 +454,7 @@ class proc_telework:
             self.display_img = None
 
             # デバイス名取得
-            cam, mic = qFFmpeg.dshow_dev_list()
+            cam, mic = qFFmpeg.ffmpeg_list_dev()
 
             # カメラ
             checkTime = time.time()

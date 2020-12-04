@@ -208,7 +208,7 @@ class SpeechAPI:
                                         #print(e.args)
                                         res_dic = {}
 
-                                    #print(json.dumps(res_dic, indent=4))
+                                    #print(json.dumps(res_dic, indent=4, ensure_ascii=False, ))
 
                                     res_text = ''
                                     for transcript in res_dic['results']['transcripts']:

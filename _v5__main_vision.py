@@ -22,6 +22,9 @@ import subprocess
 import numpy as np
 import cv2
 
+import platform
+qPLATFORM = platform.system().lower() #windows,darwin,linux
+
 #print(os.path.dirname(__file__))
 #print(os.path.basename(__file__))
 #print(sys.version_info)
@@ -59,6 +62,10 @@ import  _v5__qLog
 qLog  = _v5__qLog.qLog_class()
 import  _v5__qGuide
 qGuide= _v5__qGuide.qGuide_class()
+
+if (os.name == 'nt') or (qPLATFORM == 'darwin'):
+    import  _v5__qFFmpeg
+    qFFmpeg= _v5__qFFmpeg.qFFmpeg_class()
 
 qPLATFORM        = qRiKi.getValue('qPLATFORM'        )
 qRUNATTR         = qRiKi.getValue('qRUNATTR'         )
@@ -1489,21 +1496,30 @@ if __name__ == '__main__':
 
     # 最終カメラ番号
 
-    camDev_max = '9'
-    chk = False
-    while (chk == False) and (camDev_max >= '0'):
-        try:
-            dev = cv2.VideoCapture(int(camDev_max))
-            ret, frame = dev.read()
-            if ret == True:
-                dev.release()
-                chk = True
-            else:
+    if (os.name == 'nt') or (qPLATFORM == 'darwin'):
+        cam, mic = qFFmpeg.ffmpeg_list_dev()
+        if (len(cam) > 0):
+            #print(cam)
+            #print(mic)
+            camDev_max = str(len(cam)-1)
+        else:
+            camDev_max = 'none'
+    else:
+        camDev_max = '9'
+        chk = False
+        while (chk == False) and (camDev_max >= '0'):
+            try:
+                dev = cv2.VideoCapture(int(camDev_max))
+                ret, frame = dev.read()
+                if ret == True:
+                    dev.release()
+                    chk = True
+                else:
+                    camDev_max = str(int(camDev_max)-1)
+            except Exception as e:
                 camDev_max = str(int(camDev_max)-1)
-        except Exception as e:
-            camDev_max = str(int(camDev_max)-1)
-    if (chk == False):
-        camDev_max = 'none'
+        if (chk == False):
+            camDev_max = 'none'
 
     qLog.log('debug', main_id, 'camDev_max = ' + str(camDev_max), )
 
@@ -1773,7 +1789,7 @@ if __name__ == '__main__':
             cv2.waitKey(1)
             display = True
             show_onece = True
-        if  (not display is None) \
+        if  (display == True) \
         and (   (qFunc.statusCheck(qBusy_dev_dsp  ) == True) \
              or (qFunc.statusCheck(qBusy_d_play   ) == True) \
              or (qFunc.statusCheck(qBusy_d_browser) == True)):
@@ -1900,6 +1916,8 @@ if __name__ == '__main__':
                 # シャッター音
                 qFunc.guideSound('_shutter', sync=False)
 
+            control = ''
+
 
 
         # カメラ操作
@@ -1911,6 +1929,7 @@ if __name__ == '__main__':
                 qFunc.txtsWrite(qCtrl_result_vision, txts=[control], encoding='utf-8', exclusive=True, mode='w', )
                 qFunc.txtsWrite(qCtrl_control_kernel, txts=['_end_'], encoding='utf-8', exclusive=True, mode='w', )
                 qFunc.txtsWrite(qCtrl_control_self, txts=['_end_'], encoding='utf-8', exclusive=True, mode='w', )
+                control = ''
 
         # バックグラウンドクリック操作
 
@@ -1921,6 +1940,7 @@ if __name__ == '__main__':
                 qFunc.txtsWrite(qCtrl_result_vision, txts=[control], encoding='utf-8', exclusive=True, mode='w', )
                 qFunc.statusSet(qBusy_dev_cam, True)
                 qFunc.statusSet(qBusy_dev_dsp, True)
+                control = ''
 
         # ガイド表示（自動消去）
 

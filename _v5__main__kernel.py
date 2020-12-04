@@ -563,12 +563,15 @@ class main_kernel:
                 cn_s.put([out_name, out_value])
 
             # リブート
-            if (control == '_reboot_'):
-                out_name  = 'control'
-                out_value = control
-                cn_s.put([out_name, out_value])
+            #if (control == '_reboot_'):
+            #    out_name  = 'control'
+            #    out_value = control
+            #    cn_s.put([out_name, out_value])
 
             # コントロール
+            control = ''
+            if (inp_name.lower() == 'control'):
+                control = inp_value
             if (control == '_speech_begin_'):
                 main_speech_switch   = 'on'
             if (control == '_speech_end_'):
@@ -803,10 +806,12 @@ if __name__ == '__main__':
 
     if (qPLATFORM == 'darwin'):
         try:
+            print('macOSでTKinterの利用設定　開始')
             subprocess.call(['/usr/bin/osascript', '-e',
             'tell app "Finder" to set frontmost of process "python" to true'])
+            print('macOSでTKinterの利用設定　完了')
         except Exception as e:
-            pass
+            print('macOSでTKinterの利用設定　失敗')
 
     if (True):
         qFunc.remove(qCtrl_control_kernel    )
@@ -872,6 +877,17 @@ if __name__ == '__main__':
             else:
                 qFunc.remove(qCtrl_control_self)
                 control = txt
+
+        # 起動制御
+
+        if (control.lower()[:8] == '_speech_') \
+        or (control.lower()[:8] == '_vision_') \
+        or (control.lower()[:9] == '_desktop_') \
+        or (control.lower()[:5] == '_bgm_') \
+        or (control.lower()[:9] == '_browser_') \
+        or (control.lower()[:8] == '_player_'):
+            main_core.put(['control', control])
+            control = ''
 
         # リブート
 

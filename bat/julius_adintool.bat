@@ -1,5 +1,5 @@
 @ECHO OFF
-cd "C:\Users\kondou\Documents\GitHub\pycv5"
+cd "C:\Users\kondou\Documents\GitHub\pyRiKi1"
 
 IF NOT EXIST temp            MKDIR temp
 IF NOT EXIST temp\s5_1voice  MKDIR temp\s5_1voice

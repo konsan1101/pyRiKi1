@@ -60,34 +60,40 @@ class qFunc_class:
         return True
 
     def setNice(self, nice, ):
-        p = psutil.Process()
-        if   (nice == 'high'): # 優先度: 高
-            p.nice(psutil.HIGH_PRIORITY_CLASS)
-        elif (nice == 'above'): # 優先度: 通常以上
-            p.nice(psutil.ABOVE_NORMAL_PRIORITY_CLASS)
-        elif (nice == 'normal'): # 優先度: 通常
-            p.nice(psutil.NORMAL_PRIORITY_CLASS)
-        elif (nice == 'below'): # 優先度: 通常以下
-            p.nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
-        elif (nice == 'idol'): # 優先度: 低
-            p.nice(psutil.IDLE_PRIORITY_CLASS)
-        else: # 優先度: 通常
-            p.nice(psutil.NORMAL_PRIORITY_CLASS)
+        try:
+            p = psutil.Process()
+            if   (nice == 'high'): # 優先度: 高
+                p.nice(psutil.HIGH_PRIORITY_CLASS)
+            elif (nice == 'above'): # 優先度: 通常以上
+                p.nice(psutil.ABOVE_NORMAL_PRIORITY_CLASS)
+            elif (nice == 'normal'): # 優先度: 通常
+                p.nice(psutil.NORMAL_PRIORITY_CLASS)
+            elif (nice == 'below'): # 優先度: 通常以下
+                p.nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+            elif (nice == 'idol'): # 優先度: 低
+                p.nice(psutil.IDLE_PRIORITY_CLASS)
+            else: # 優先度: 通常
+                p.nice(psutil.NORMAL_PRIORITY_CLASS)
+        except:
+            pass
 
     def getNice(self, ):
-        p = psutil.Process()
-        nice = p.nice()
-        if   (nice == psutil.HIGH_PRIORITY_CLASS): # 優先度: 高
-            return 'high'
-        elif (nice == psutil.ABOVE_NORMAL_PRIORITY_CLASS): # 優先度: 通常以上
-            return 'above'
-        elif (nice == psutil.NORMAL_PRIORITY_CLASS): # 優先度: 通常
-            return 'normal'
-        elif (nice == psutil.BELOW_NORMAL_PRIORITY_CLASS): # 優先度: 通常以下
-            return 'below'
-        elif (nice == psutil.IDLE_PRIORITY_CLASS): # 優先度: 低
-            return 'idol'
-        else: # 優先度: 通常
+        try:
+            p = psutil.Process()
+            nice = p.nice()
+            if   (nice == psutil.HIGH_PRIORITY_CLASS): # 優先度: 高
+                return 'high'
+            elif (nice == psutil.ABOVE_NORMAL_PRIORITY_CLASS): # 優先度: 通常以上
+                return 'above'
+            elif (nice == psutil.NORMAL_PRIORITY_CLASS): # 優先度: 通常
+                return 'normal'
+            elif (nice == psutil.BELOW_NORMAL_PRIORITY_CLASS): # 優先度: 通常以下
+                return 'below'
+            elif (nice == psutil.IDLE_PRIORITY_CLASS): # 優先度: 低
+                return 'idol'
+            else: # 優先度: 通常
+                pass
+        except:
             pass
         return 'normal'
 
@@ -105,7 +111,7 @@ class qFunc_class:
     def putJson(self, json_path='_config/', json_file='test_key.json', json_dic={}, ):
         try:
             w = codecs.open(json_path + json_file, 'w', 'utf-8')
-            w.write(json.dumps(json_dic,indent=4,))
+            w.write(json.dumps(json_dic, indent=4, ensure_ascii=False, ))
             w.close()
             return True
         except Exception as e:
@@ -423,18 +429,36 @@ class qFunc_class:
             pass
         return False
 
-    def sendKey(self, txt='', cr=True, lf=False ):
+
+
+    def waitSec(self, sec=0, ):
+        xSec = sec
+        while (int(xSec) > 0):
+            print('wait … ' + str(int(xSec)))
+            time.sleep(1)
+            xSec -= 1
+        if (xSec > 0):
+            time.sleep(xSec)
+        return True
+
+    def sendKey(self, txt='', cr=True, lf=False, afterSec=0.5, ):
         out_txt = txt
         if (cr==True) or (lf==True):
             out_txt = out_txt.replace('\r', '')
             out_txt = out_txt.replace('\n', '')
-
         pyperclip.copy(out_txt)
         pyautogui.hotkey('ctrl', 'v')
-
         if (cr==True) or (lf==True):
             pyautogui.typewrite(['enter',])
+        if (afterSec != 0):
+            time.sleep(afterSec)
+        return True
 
+    def keyPress(self, keys=[], afterSec=0.5, ):
+        for key in keys:
+            pyautogui.press(key)
+            if (afterSec != 0):
+                time.sleep(afterSec)
         return True
 
     def notePad(self, txt='', cr=True, lf=False, ):
@@ -682,3 +706,27 @@ if (__name__ == '__main__'):
 
 
 
+# ---------------
+# pyautogui press
+# ---------------
+# Enterキー  ‘enter’,’retuen’,’\n’
+# Escキー    ‘esc’
+# Shiftキー  ‘shiftleft’,’shiftright’
+# Altキー    ‘altleft’,’altright’
+# Ctrlキー   ‘ctrlleft’,’ctrlright’
+# Tabキー    ‘tab’,’\t’
+# Backspaceキー・Deleteキー  ‘backspace’,’delete’
+# PageUpキー・PageDownキー   ‘pageup’,’pagedown’
+# Homeキー・Endキー          ‘Home’,’end’
+# 矢印キー(↑↓←→)             ‘up’,’down’,’left’,’right’
+# ファンクションキー          ‘f1′,’f2’,’f3’など
+# 音量コントロールキー        ‘volumeup’,’volumedown’,’volumemute’
+# Pauseキー      ‘pause’
+# CapsLockキー   ‘capslock’
+# NumLockキー    ‘numlock’
+# ScrollLockキー ‘scrolllock’
+# Insキー        ‘insert’
+# PrintScreenキー‘printscreen’
+# Winキー(Windowsのみ)   ‘winleft’,’winright’
+# Commandキー(Macのみ)   ‘command’
+# Optionキー(Macのみ)    ‘option’

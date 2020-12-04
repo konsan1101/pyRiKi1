@@ -234,6 +234,7 @@ class proc_vin2jpg:
             # 処理
             path = self.path
             path_files = glob.glob(path + '*')
+            path_files.sort()
             if (len(path_files) > 0):
 
                 #try:

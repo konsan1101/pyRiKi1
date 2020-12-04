@@ -116,10 +116,34 @@ qRdy__v_sendkey  = qRiKi.getValue('qRdy__v_sendkey'  )
 qRdy__d_reader   = qRiKi.getValue('qRdy__d_reader'   )
 qRdy__d_sendkey  = qRiKi.getValue('qRdy__d_sendkey'  )
 
-
-
 # フォント
 qFONT_default = {'file':qPath_fonts + '_vision_font_ipaexg.ttf','offset':8}
+
+
+
+import _v5__qRiKi_key
+
+config_file = '_v5__sub_player_key.json'
+
+qRiKi_key = _v5__qRiKi_key.qRiKi_key_class()
+res, dic = qRiKi_key.getCryptJson(config_file=config_file, auto_crypt=False, )
+if (res == False):
+    dic['_crypt_']    = 'none'
+    dic['engine']     = 'ffplay'
+    dic['path_winos'] = 'C:/Users/Public/'
+    dic['path_macos'] = '/Users/Shared/'
+    dic['path_linux'] = '/users/kondou/Documents/'
+    dic['folder_00']  = '_動画_AppleTV'
+    dic['folder_01']  = '_m4v__Clip/Perfume'
+    dic['folder_02']  = '_m4v__Clip/BABYMETAL'
+    dic['folder_03']  = '_m4v__Clip/OneOkRock'
+    dic['folder_04']  = '_m4v__Clip/きゃりーぱみゅぱみゅ'
+    dic['folder_05']  = '_m4v__Clip/etc'
+    dic['folder_06']  = '_m4v__Clip/SekaiNoOwari'
+    dic['folder_07']  = '_動画_AppleTV'
+    dic['folder_08']  = '_m4v__Clip/Perfume'
+    dic['folder_09']  = '_m4v__Clip/BABYMETAL'
+    res = qRiKi_key.putCryptJson(config_file=config_file, put_dic=dic, )
 
 
 
@@ -310,6 +334,40 @@ class main_player:
             self.play_proc[i] = None
             self.play_id[i]   = None
             self.play_path[i] = None
+
+        # 構成情報
+        json_file = '_v5__sub_player_key.json'
+        self.engine       = 'ffplay'
+        self.path_winos   = 'C:/Users/Public/'
+        self.path_macos   = '/Users/Shared/'
+        self.path_linux   = '/users/kondou/Documents/'
+        self.folder       = {}
+        self.folder['00'] = '_動画_AppleTV'
+        self.folder['01'] = '_m4v__Clip/Perfume'
+        self.folder['02'] = '_m4v__Clip/BABYMETAL'
+        self.folder['03'] = '_m4v__Clip/OneOkRock'
+        self.folder['04'] = '_m4v__Clip/きゃりーぱみゅぱみゅ'
+        self.folder['05'] = '_m4v__Clip/etc'
+        self.folder['06'] = '_m4v__Clip/SekaiNoOwari'
+        self.folder['07'] = '_m4v__Clip/GB'
+        self.folder['08'] = '_m4v__Clip/Perfume'
+        self.folder['09'] = '_m4v__Clip/BABYMETAL'
+        res, json_dic = qRiKi_key.getCryptJson(config_file=json_file, auto_crypt=False, )
+        if (res == True):
+            self.engine       = json_dic['engine']
+            self.path_winos   = json_dic['path_winos']
+            self.path_macos   = json_dic['path_macos']
+            self.path_linux   = json_dic['path_linux']
+            self.folder['00'] = json_dic['folder_00']
+            self.folder['01'] = json_dic['folder_01']
+            self.folder['02'] = json_dic['folder_02']
+            self.folder['03'] = json_dic['folder_03']
+            self.folder['04'] = json_dic['folder_04']
+            self.folder['05'] = json_dic['folder_05']
+            self.folder['06'] = json_dic['folder_06']
+            self.folder['07'] = json_dic['folder_07']
+            self.folder['08'] = json_dic['folder_08']
+            self.folder['09'] = json_dic['folder_09']
 
     def __del__(self, ):
         qLog.log('info', self.proc_id, 'bye!', display=self.logDisp, )
@@ -508,28 +566,14 @@ class main_player:
     # 処理
     def sub_proc(self, proc_text, ):
         path = {}
-        if (qPLATFORM == 'windows'):
-            path['00'] = u'C:/Users/Public/_動画_AppleTV'
-            path['01'] = u'C:/Users/Public/_m4v__Clip/Perfume'
-            path['02'] = u'C:/Users/Public/_m4v__Clip/BABYMETAL'
-            path['03'] = u'C:/Users/Public/_m4v__Clip/OneOkRock'
-            path['04'] = u'C:/Users/Public/_m4v__Clip/きゃりーぱみゅぱみゅ'
-            path['05'] = u'C:/Users/Public/_m4v__Clip/etc'
-            path['06'] = u'C:/Users/Public/_m4v__Clip/SekaiNoOwari'
-            path['07'] = u'C:/Users/Public/_m4v__Clip/GB'
-            path['08'] = path['02']
-            path['09'] = path['01']
-        elif (qPLATFORM == 'darwin'):
-            path['00'] = u'/Users/kondou/Documents/_動画_AppleTV'
-            path['01'] = u'/Users/kondou/Documents/_m4v__Clip/Perfume'
-            path['02'] = u'/Users/kondou/Documents/_m4v__Clip/BABYMETAL'
-            path['03'] = u'/Users/kondou/Documents/_m4v__Clip/OneOkRock'
-            path['04'] = u'/Users/kondou/Documents/_m4v__Clip/きゃりーぱみゅぱみゅ'
-            path['05'] = u'/Users/kondou/Documents/_m4v__Clip/GB'
-            path['06'] = u'/Users/kondou/Documents/_m4v__Clip/SekaiNoOwari'
-            path['07'] = u'/Users/kondou/Documents/_m4v__Clip/etc'
-            path['08'] = path['02']
-            path['09'] = path['01']
+
+        for id in self.folder:
+            if (os.name == 'nt'):
+                path[id] = self.path_winos + self.folder[id]
+            elif (qPLATFORM == 'darwin'):
+                path[id] = self.path_macos + self.folder[id]
+            else:
+                path[id] = self.path_linux + self.folder[id]
 
         if (proc_text.find(u'リセット') >=0):
             #self.sub_stop(proc_text, )
@@ -670,7 +714,8 @@ class main_player:
     def sub_stop(self, proc_text, ):
 
         # リセット
-        qFunc.kill('ffplay', )
+        #qFunc.kill('ffplay', )
+        qFunc.kill(self.engine, )
 
         # 全Ｑリセット
         for i in range(1, self.play_max+1):
@@ -687,7 +732,8 @@ class main_player:
                 #    self.play_path[i] = ''
 
         # リセット
-        qFunc.kill('ffplay', )
+        #qFunc.kill('ffplay', )
+        qFunc.kill(self.engine, )
 
         # ビジー解除
         self.sub_alive()
